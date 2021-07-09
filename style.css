@@ -1,0 +1,87 @@
+body {
+  background-color: #308834;
+  font-family: Helvetica, Verdana, serif;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  background-color: white;
+  margin: 1em 2em;
+  border-radius: 5px;
+  padding: 10px 30px;
+}
+
+.changeCardsButton,
+.continueButton,
+.pileselection {
+  display: none;
+}
+
+.allcards {
+  max-width: 860px;
+}
+
+.allcards img {
+  height: 10em;
+  margin: 0px 3px;
+}
+
+main .piles {
+  display: inline-flex;
+  text-align: center;
+}
+
+.piles div {
+  padding: 0px 0.5em 0px 0.5em;
+}
+
+.cardpiles {
+  height: 8em;
+  margin: 3px;
+}
+
+.newrow {
+  position: relative;
+  top: -3em;
+}
+
+.correctCard {
+  margin: 2em;
+}
+.newCardLine {
+  display: none;
+}
+
+footer {
+  font-size: 0.7em;
+  margin-top: auto;
+}
+footer a {
+  color: white;
+}
+
+@media only screen and (min-width: 990px) {
+  .piles div {
+    padding: 0px 0.5em 0px 0.3em;
+  }
+  .newCardLine {
+    display: flex;
+  }
+  .cardpiles {
+    height: 8em;
+    margin: 3px;
+  }
+}
+
+@media only screen and (min-width: 1315px) {
+  .newCardLine {
+    display: flex;
+  }
+  .cardpiles {
+    height: 10em;
+    margin: 5px;
+  }
+}
