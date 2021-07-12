@@ -1,13 +1,18 @@
-const bodyHTML = document.documentElement.querySelector("body");
+// Card trick by Stian Martinsen - 2021
 
-//let allCardsHTML;
+// button to toggle if the start button should be a reset-button instead.
 let buttonIsStart = true;
+// arrays to be used for each pile
 let pile1 = [];
 let pile2 = [];
 let pile3 = [];
+// Variable to keep track of the number of selections. (correct card is found at min 3)
 let pileSelectionCounter = 0;
-let pileSelectionButtons;
+// store the cards from the API in this array:
+let cards;
 
+// HTML-elements to use.
+const bodyHTML = document.documentElement.querySelector("body");
 const mainHTML = document.documentElement.querySelector("main");
 const correctCardHTML =
   document.documentElement.querySelector(".correctCardArea");
@@ -16,110 +21,118 @@ const allCardsHTML = document.documentElement.querySelector(".allcards");
 const startButton = document.documentElement.querySelector(".startButton");
 const changeCardsButton =
   document.documentElement.querySelector(".changeCardsButton");
-//const continueButtonArea = document.documentElement.querySelector(".continue");
 const continueButton =
   document.documentElement.querySelector(".continueButton");
 const pile1placement = document.documentElement.querySelector(".pile1cards");
 const pile2placement = document.documentElement.querySelector(".pile2cards");
 const pile3placement = document.documentElement.querySelector(".pile3cards");
 
-pileSelectionButtons =
+const pileSelectionButtons =
   document.documentElement.querySelectorAll(".pileselection");
-let cards;
 
+// getNewCards() fetches a new deck, and retrieves 21 cards from the deck.
 const getNewCards = async function () {
-  // Empties the array which may hold previous items.
+  // empties the array to avoid adding more to previously fetched decks.
   cards = [];
   // Get the deck_id
   let response = await fetch(
     "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1"
   );
-  // convert response to json format.
   let post = await response.json();
-  // Get the cards in the deck
+  // use the deck_id fetched in the previous call and get the cards in the deck.
   let cardResponse = await fetch(
     `https://deckofcardsapi.com/api/deck/${post.deck_id}/draw/?count=21`
   );
-  // convert response to json format.
+  //stores the result in a temp variable because it needs further processing.
   let tempCards = await cardResponse.json();
-  //resetting cards to only store the cards info.
+  //reassigning cards to only store the cards info.
   tempCards = tempCards.cards;
 
-  // iterating through tempCards to create a new Array to store only the images.
+  // iterating through tempCards to create a new Array to store only the image-urls.
   tempCards.forEach((card) => {
     cards.push(card.image);
   });
-  //console.log("Fetched array:");
-  //console.log(cards);
 };
-
-// bug 8.july // first array incl. all json keys, re-piling incl. only images.
-
+// Runs the getNewCards on page load, so the initial deck is already loaded when the Start-button is clicked.
 getNewCards();
 
+// User needs to click the start-button to start.
 startButton.onclick = async function () {
   // makes the change cards button visible.
-
   if (buttonIsStart === true) {
+    // toggles the function of this button.
     buttonIsStart = false;
+    // changes the Text of the button.
     startButton.innerHTML = "Reset Game";
+    // makes the ChangeCards-button visible. (already loaded in the HTML, but hidden by CSS)
     changeCardsButton.style.setProperty(`display`, "inline-flex");
+    // presents the deck.
     presentDeck();
   } else {
+    // When the button is a ResetButton, the following happens.
+    // Text on the button is changed back.
     startButton.innerHTML = "Start Game";
+    // Hides buttons and html-sections
     changeCardsButton.style.setProperty(`display`, `none`);
     mainheaderHTML.style.setProperty(`display`, `none`);
     continueButton.style.setProperty(`display`, `none`);
-    buttonIsStart = true;
-    pileSelectionCounter = 0;
-    allCardsHTML.innerHTML = ``;
-    ClearPiles();
-    showPileButtons(0);
     correctCardHTML.innerHTML = ``;
+    allCardsHTML.innerHTML = ``;
+    // toggles the function of this button.
+    buttonIsStart = true;
+    // Resets the pileSelectionCounter which might have been increased before reset.
+    pileSelectionCounter = 0;
+    // Clears the piles.
+    ClearPiles();
+    // Hides the PileButtons.
+    showPileButtons(0);
+    // Grabs a ned deck of cards.
     await getNewCards();
   }
 };
 
+// The ChangeCards-button simply calls the API for new cards and presents them in the current view.
 changeCardsButton.onclick = async function () {
-  //getDeckId();
   await getNewCards();
   presentDeck();
 };
 
+// The presentDeck() displays the deck loaded from the API for verification by the user.
 function presentDeck() {
-  //changeCardsButton.style.setProperty(`display`, "inline-flex");
+  // Makes the mainheader-element visible and sets the H2.
   mainheaderHTML.style.setProperty(`display`, `flex`);
   mainheaderHTML.innerHTML = `Remember one of these cards before you click "Continue".`;
+  // Empties the "allCards". Without this the cards presented will accumulate when changing cards.
   allCardsHTML.innerHTML = ``;
-  //const allCardsHTML = document.documentElement.querySelector(".allcards");
+  // Create the HTML-element for each card.
   for (i = 0; i < cards.length; i++) {
-    //console.log(cards.cards[i].image);
     allCardsHTML.innerHTML += `<img src="${cards[i]}" class="card">`;
   }
-  // Adding Continue-button with onClick.
-  //maincontinueHTML.innerHTML += `<button class="continueButton">Continue</button>`;
+  // Makes the ContinueButton-visible.
   continueButton.style.setProperty(`display`, `flex`);
 }
 
+// The onClick-function for the Continue-button.
 continueButton.onclick = function () {
-  //console.log("Click!");
+  // Hides the buttons which are now obsolete.
   changeCardsButton.style.setProperty(`display`, `none`);
   continueButton.style.setProperty(`display`, `none`);
   allCardsHTML.innerHTML = ``;
-  //mainHTML.innerHTML = ``;
-  //console.log("continuebutton cards:");
-  //console.log(cards);
+  //Present the piles...
   presentPiles(cards);
 };
 
+// presentPiles() takes the current deck of 21 cards and simulates the dealing of cards in 3 piles.
 function presentPiles(CardDeck) {
+  // change the instructions
   mainheaderHTML.innerHTML = `2. Click the pile-button below the pile where you see your card, round: ${
     pileSelectionCounter + 1
   }`;
-  let cardRow1 = 0,
-    cardRow2 = 0,
-    cardRow3 = 0;
-  // ordering the piles
+  // resetting a variable to identify where the card in each pile is. Currently used for styling.
+  let cardPileIndex1 = 0,
+    cardPileIndex2 = 0,
+    cardPileIndex3 = 0;
+  // ordering each card in each pile like a human would deal the cards.
   pile1 = [
     CardDeck[0],
     CardDeck[3],
@@ -147,100 +160,80 @@ function presentPiles(CardDeck) {
     CardDeck[17],
     CardDeck[20],
   ];
-  //console.log(pile1);
-  //console.log(pile2);
-  //console.log(pile3);
+
+  // adding the HTML requires for each card in each pile.
   pile1.forEach((card) => {
-    cardRow1++;
-    //console.log(cardRow1 + " - " + card);
-    pile1placement.innerHTML += `<img src="${card}" class="cardpiles cardrow1${cardRow1}">`;
-    if (cardRow1 === 2 || cardRow1 === 5) {
+    // setting the pileIndex for each card.
+    cardPileIndex1++;
+    // addubg the card.
+    pile1placement.innerHTML += `<img src="${card}" class="cardpiles">`;
+    // adding a lineshift-component. Only used for styling.
+    if (cardPileIndex1 === 2 || cardPileIndex1 === 5) {
       pile1placement.innerHTML += `<br class="newCardLine">`;
     }
-    // if (cardRow1 === 7) {
-    //   pile1placement.innerHTML += `</div>`;
   });
-  //pile1placement.innerHTML += `</div>`;
   pile2.forEach((card) => {
-    cardRow2++;
-    pile2placement.innerHTML += `<img src="${card}" class="cardpiles cardrow2${cardRow2}">`;
-    if (cardRow2 === 2 || cardRow2 === 5) {
+    cardPileIndex2++;
+    pile2placement.innerHTML += `<img src="${card}" class="cardpiles">`;
+    if (cardPileIndex2 === 2 || cardPileIndex2 === 5) {
       pile2placement.innerHTML += `<br class="newCardLine">`;
     }
   });
   pile3.forEach((card) => {
-    cardRow3++;
-    pile3placement.innerHTML += `<img src="${card}" class="cardpiles cardrow3${cardRow3}">`;
-    if (cardRow3 === 2 || cardRow3 === 5) {
+    cardPileIndex3++;
+    pile3placement.innerHTML += `<img src="${card}" class="cardpiles">`;
+    if (cardPileIndex3 === 2 || cardPileIndex3 === 5) {
       pile3placement.innerHTML += `<br class="newCardLine">`;
     }
   });
-  //
-  //mainheaderHTML.style.setProperty(`display`, `none`);
+  // Display the pileSelection-buttons.
   showPileButtons(1);
-  // pileSelectionButtons.forEach(function (button) {
-  //   button.style.setProperty(`display`, `flex`);
-  // });
 }
 
+// onClick-functions for all the 3 pileSelection-buttons.
 pileSelectionButtons.forEach(function (button) {
   button.addEventListener("click", () => {
+    // increase the pileSelectionCounter to identify which round we are in.
     pileSelectionCounter++;
-    //console.log("PileSelectionCounter: " + pileSelectionCounter);
-    //console.log("Button " + button.parentElement.className + " clicked, counter, " + pileSelectionCounter);
+    // If we are not ready to present the correct card, we do the following;
     if (pileSelectionCounter < 3) {
-      //console.log(button.parentElement.className);
+      //buttonClass is defined to identify which of the 3 buttons that are clicked.
       let buttonClass = button.parentElement.className;
+      // if pile 1 is clicked:
       if (buttonClass === "pile1") {
-        //console.log("Button = pile1");
-        //newCardOrder(rePileOrder(1));
+        //clear the piles.
         ClearPiles();
-        //dealCardsInPiles(newCardOrder(rePileOrder(1)));
-        //dealCardsInPiles(getNextCardArray(1));
-        //console.log(cards);
-        let nextArray = getNextCardArray(1);
-        //console.log(nextArray);
-        //presentPiles(getNextCardArray(1));
-        presentPiles(nextArray);
-        //getNextCardArray(1);
+        //Retrieve the next array of cards, buy providing getNextCardArray with the selected pile (1), and then presents it using presentPiles().
+        presentPiles(getNextCardArray(1));
       } else if (buttonClass === "pile2") {
-        //console.log("Button = pile2");
-        //newCardOrder(rePileOrder(2));
         ClearPiles();
-        //dealCardsInPiles(newCardOrder(rePileOrder(2)));
-        //dealCardsInPiles(getNextCardArray(2));
         presentPiles(getNextCardArray(2));
       } else if (buttonClass === "pile3") {
-        //console.log("Button = pile3");
-        //newCardOrder(rePileOrder(3));
         ClearPiles();
-        //dealCardsInPiles(newCardOrder(rePileOrder(3)));
-        //dealCardsInPiles(getNextCardArray(3));
         presentPiles(getNextCardArray(3));
       }
     } else {
-      // console.log(
-      //   "Ready to reveal card after pile selection #" + pileSelectionCounter
-      // );
-      //console.log(button.parentElement.className.replace("pile", ""));
+      // When we are ready to present the correct card:
+      // Extracts the pile number from the button-name selected.
       let CorrectPile = getNextCardArray(
         button.parentElement.className.replace("pile", "")
       );
-      //console.log(button.parentElement.className);
-      //console.log("Your card is in pile: " + CorrectPile);
-      //console.log("Card: " + CorrectPile[10]);
+      // Calls the function to present the card and provdes the 11th. card (index 10), which is the right one.
       presentCorrectCard(CorrectPile[10]);
     }
   });
 });
 
+// Created this ClearPiles-function to just empty the piles, because it`s needed more than one place.
+// I concidered to add more functionality to the visual "undealing" of cards, which could improve the user experience.
+
 function ClearPiles() {
-  //console.log("Clearing piles");
   pile1placement.innerHTML = ``;
   pile2placement.innerHTML = ``;
   pile3placement.innerHTML = ``;
 }
 
+// showPileButtons just shows or hides the 3 PileSelectionButtons.
 function showPileButtons(boolean) {
   if (boolean === 1) {
     pileSelectionButtons.forEach(function (button) {
@@ -253,34 +246,35 @@ function showPileButtons(boolean) {
   }
 }
 
+// getNextCardArray takes the selectedPile, puts it in the middle of the next cardDeck to deal.
 function getNextCardArray(selectedPile) {
-  //console.log("GetNextCards: " + selectedPile);
+  // Defines 3 piles.
   let piles = [1, 2, 3];
-  // removes the pile to be selected.
+  // removes the selectedPile from the pileArray.
   piles.splice(selectedPile - 1, 1);
-  // randomize (select which of the remaining piles to start with.)
-  if (Math.round(Math.random()) === 1) {
-    piles.reverse();
-  }
-  // adds the selectedPile to the middle of the array.
+  // The below "if" was concidered to be used as a visual "trick" to randomize which order the stacks are undealt.
+  // if (Math.round(Math.random()) === 1) {
+  //   piles.reverse();
+  // }
+  // Adds the selectedPile to the middle of the array.
   piles.splice(1, 0, selectedPile);
-  // splitting piles:
-  //console.log("Original piles (before repiling)");
-  //console.log(pile1);
-  //console.log(pile2);
-  //console.log(pile3);
+  // Reassigns the pilenames to be used in the next function. (these results are already defines variables)
   firstPile = "pile" + piles[0];
   selectedPile = "pile" + piles[1];
   LastPile = "pile" + piles[2];
+  // creates the variable to be returned by this function. It contains the values of 3 existing variables, which is why I use the eval().
   let nextDeck = eval(firstPile).concat(eval(selectedPile), eval(LastPile));
-  //console.log(nextDeck);
+  // Returns the variable with the new order of cardPiles.
   return nextDeck;
 }
 
+// presentCorrectCards is triggered when we are ready to present the card.
 function presentCorrectCard(correctCard) {
-  console.log("Correct card is: " + correctCard);
+  // remove the card piles.
   ClearPiles();
+  // Hides the pilebuttons.
   showPileButtons(0);
+  // Reveals the card along with the text presented.
   mainheaderHTML.innerHTML = `According to my intelligence this is your card...`;
   mainheaderHTML.style.setProperty(`display`, `flex`);
   correctCardHTML.innerHTML += `<img src="${correctCard}" class="correctCard">`;
