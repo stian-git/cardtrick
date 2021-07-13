@@ -20,20 +20,27 @@
 
 *How much info should be put in the HTML?*
 
-During the API-call I get a result of "an array inside an array inside a third array" and I create a variable from the inner array in a new array. I was able to easily extract the middle from the our array, but the same method on the inner array did not work the same way. I expect there to be a simpler way to store the correct value directly in the cards-variable, but I used a workaround that iterates a push of each value and didn`t bother to look more into it.
+*I probably should have added some error handling when the API-call fails?*
+
+During the API-call I get a result of "arrays in arrays" (see below) and I can easily grab the array of "cards", but doing the same with the inner array to get the "image" did not work as expected. I expect there to be a simpler way to store the correct value directly in the cards-variable, but I used a workaround that iterates a push of each value and did not bother to look more into it. 
+
+*Is there a better way to fetch the image-property directly into a new array?*
 
 ---
-`{
+```{
 "success": true, 
 "deck_id": "bvswbt1xf380", 
 "cards": [
-	{"code": "0D", "image": "https://deckofcardsapi.com/static/img/0D.png", "images": {"svg": "https://deckofcardsapi.com/static/img/0D.svg", "png": "https://deckofcardsapi.com/static/img/0D.png"}, "value": "10", "suit": "DIAMONDS"}, 	{"code": "KS", "image": "https://deckofcardsapi.com/static/img/KS.png", "images": {"svg": "https://deckofcardsapi.com/static/img/KS.svg", "png": "https://deckofcardsapi.com/static/img/KS.png"}, "value": "KING", "suit": "SPADES"}, 	{"code": "0S", "image": "https://deckofcardsapi.com/static/img/0S.png", "images": {"svg": "https://deckofcardsapi.com/static/img/0S.svg", "png": "https://deckofcardsapi.com/static/img/0S.png"}, "value": "10", "suit": "SPADES"},
+	{"code": "0D", "image": "https://deckofcardsapi.com/static/img/0D.png", "images": {"svg": "https://deckofcardsapi.com/static/img/0D.svg", "png": "https://deckofcardsapi.com/static/img/0D.png"}, "value": "10", "suit": "DIAMONDS"}, 	
+	{"code": "KS", "image": "https://deckofcardsapi.com/static/img/KS.png", "images": {"svg": "https://deckofcardsapi.com/static/img/KS.svg", "png": "https://deckofcardsapi.com/static/img/KS.png"}, "value": "KING", "suit": "SPADES"}, 	
+	{"code": "0S", "image": "https://deckofcardsapi.com/static/img/0S.png", "images": {"svg": "https://deckofcardsapi.com/static/img/0S.svg", "png": "https://deckofcardsapi.com/static/img/0S.png"}, "value": "10", "suit": "SPADES"},
 "remaining": 31
-}`
-
+}
+```
 
 *Each pile got its own array of cards. Maybe there is a simpler way than I have used to define these?*
-`pile1 = [
+```
+pile1 = [
     CardDeck[0],
     CardDeck[3],
     CardDeck[6],
@@ -41,5 +48,5 @@ During the API-call I get a result of "an array inside an array inside a third a
     CardDeck[12],
     CardDeck[15],
     CardDeck[18],
-];`
-
+];
+```
