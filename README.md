@@ -8,6 +8,7 @@
 
 **Goals:**
 - Use JavaScript to create a card trick.
+- Get some experience on async functions.
 - Use the API from http://deckofcardsapi.com/.
 
 **Why this trick?**
