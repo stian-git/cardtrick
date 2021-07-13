@@ -1,4 +1,4 @@
-# Cardtrick
+# Cardtrick // [https://cardtrick.tekniskpotet.no](https://cardtrick.tekniskpotet.no)
 ## by [Stian Martinsen](https://www.linkedin.com/in/stian-martinsen-1662a515/), 2021
 
 ---
