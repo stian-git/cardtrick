@@ -12,8 +12,6 @@ let pileSelectionCounter = 0;
 let cards;
 
 // HTML-elements to use.
-const bodyHTML = document.documentElement.querySelector("body");
-const mainHTML = document.documentElement.querySelector("main");
 const correctCardHTML =
   document.documentElement.querySelector(".correctCardArea");
 const mainheaderHTML = document.documentElement.querySelector(".mainheader");
@@ -74,7 +72,7 @@ startButton.onclick = async function () {
     startButton.innerHTML = "Start Game";
     // Hides buttons and html-sections
     changeCardsButton.style.setProperty(`display`, `none`);
-    mainheaderHTML.style.setProperty(`display`, `none`);
+    mainheaderHTML.innerHTML = ``;
     continueButton.style.setProperty(`display`, `none`);
     correctCardHTML.innerHTML = ``;
     allCardsHTML.innerHTML = ``;
@@ -100,7 +98,6 @@ changeCardsButton.onclick = async function () {
 // The presentDeck() displays the deck loaded from the API for verification by the user.
 function presentDeck() {
   // Makes the mainheader-element visible and sets the H2.
-  mainheaderHTML.style.setProperty(`display`, `flex`);
   mainheaderHTML.innerHTML = `Remember one of these cards before you click "Continue".`;
   // Empties the "allCards". Without this the cards presented will accumulate when changing cards.
   allCardsHTML.innerHTML = ``;
