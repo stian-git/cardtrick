@@ -6,9 +6,6 @@
 ![Instructions](img/1-Instructions.jpg "Instructions")
 ![Choose pile](img/2-Choosepile.jpg "Choose pile")
 ![Reveal card](img/3-Revealcard.jpg "Reveal card")
-![Instructions](https://https://infallible-newton-fee18b.netlify.app/img/1-Instructions.jpg "Instructions")
-![Choose pile](https://https://infallible-newton-fee18b.netlify.app/img/2-Choosepile.jpg "Choose pile")
-![Reveal card](https://https://infallible-newton-fee18b.netlify.app/img/3-Revealcard.jpg "Reveal card")
 
 ---
 
